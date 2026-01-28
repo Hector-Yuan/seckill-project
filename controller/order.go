@@ -5,6 +5,7 @@ import (
 	"seckill-project/model"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 // CreateOrder
@@ -70,7 +71,7 @@ func CreateOrder(c *gin.Context) {
 	//      从而形成串行化的扣减过程。
 	var product model.Product
 	// 悲观锁用法：通过 gorm 的 query_option 注入 FOR UPDATE，确保读取到的是锁定版本
-	if err := tx.Set("gorm:query_option", "FOR UPDATE").First(&product, req.ProductID).Error; err != nil {
+	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&product, req.ProductID).Error; err != nil {
 		// 商品不存在或查询异常：直接回滚并返回
 		tx.Rollback()
 		c.JSON(404, gin.H{"error": "商品不存在"})
