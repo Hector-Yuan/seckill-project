@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"seckill-project/common"
 	"seckill-project/model"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
@@ -44,6 +46,23 @@ func CreateOrder(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "用户信息错误"})
 		return
 	}
+	//Redis锁
+	lockKey := fmt.Sprintf("order_lock:%d:%d", userID, req.ProductID)
+	lockkeySuccess, err := common.RDB.SetNX(c.Request.Context(), lockKey, "1", 5*time.Second).Result()
+	if err != nil {
+		// Redis 连不上或其他网络错误
+		c.JSON(500, gin.H{"error": "系统繁忙，请稍后再试"})
+		return
+	}
+	if !lockkeySuccess {
+		// 锁已存在，说明有人（或者同一个用户）正在操作
+		c.JSON(400, gin.H{"error": "操作太频繁，请稍后再试"})
+		return
+	}
+	// 抢锁成功后，无论后续业务成功还是失败，都最好在函数结束时释放锁
+	// 这样可以避免：万一业务逻辑只执行了 10ms，锁却占用了 5s，
+	// 虽然对“防刷”来说 5s 也没问题，但作为标准分布式锁，用完即删是好习惯。
+	defer common.RDB.Del(c.Request.Context(), lockKey)
 
 	// 3) 开启事务：后续所有数据库操作统一使用 tx
 	// 说明：事务保证 ACID 特性：
