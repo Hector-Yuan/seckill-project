@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>后台管理 - 秒杀系统</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1>商品管理</h1>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" class="btn secondary">返回首页</a>
+          <a href="./list.html" class="btn secondary">去秒杀页</a>
+        </div>
+      </header>
+
+      <main class="grid-2">
+        <section class="card">
+          <h2>发布商品</h2>
+          <form id="formCreateProduct" class="form">
+            <div class="form-group">
+              <label>商品名称</label>
+              <input type="text" name="name" required placeholder="例如：iPhone 16 Pro" />
+            </div>
+            <div class="form-group">
+              <label>初始库存</label>
+              <input type="number" name="stock" required placeholder="例如：100" />
+            </div>
+            <button type="submit" class="btn primary">发布商品</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>操作日志</h2>
+          <pre class="log" id="log"></pre>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+    <script>
+      // 页面特定逻辑
+      document.addEventListener("DOMContentLoaded", () => {
+        requireAuth('admin'); // 必须是管理员
+        
+        const form = document.getElementById("formCreateProduct");
+        if (form) {
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.stock = parseInt(data.stock, 10);
+            await handleCreateProduct(data);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

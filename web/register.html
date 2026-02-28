@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注册 - 秒杀系统</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1>注册</h1>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" class="btn secondary">返回首页</a>
+          <a href="./login.html" class="btn secondary">去登录</a>
+        </div>
+      </header>
+
+      <main class="grid-2">
+        <section class="card">
+          <h2>用户注册</h2>
+          <form id="formRegister" class="form">
+            <div class="form-group">
+              <label>用户名</label>
+              <input type="text" name="username" required placeholder="例如：user1" />
+            </div>
+            <div class="form-group">
+              <label>密码</label>
+              <input type="password" name="password" required placeholder="密码" />
+            </div>
+            <div class="form-group">
+              <label>邮箱</label>
+              <input type="email" name="email" placeholder="可选：example@mail.com" />
+            </div>
+            <div class="form-group">
+              <label>角色</label>
+              <select name="role" style="width: 100%; padding: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 4px;">
+                <option value="user">普通用户 (User)</option>
+                <option value="admin">管理员 (Admin)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn primary">注册</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>操作日志</h2>
+          <pre class="log" id="log"></pre>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+    <script>
+      // 页面特定逻辑
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("formRegister");
+        if (form) {
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            await handleRegister(data);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

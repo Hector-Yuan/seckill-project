@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录 - 秒杀系统</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1>登录</h1>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" class="btn secondary">返回首页</a>
+          <a href="./register.html" class="btn secondary">去注册</a>
+        </div>
+      </header>
+
+      <main class="grid-2">
+        <section class="card">
+          <h2>用户登录</h2>
+          <form id="formLogin" class="form">
+            <div class="form-group">
+              <label>用户名</label>
+              <input type="text" name="username" required placeholder="例如：user1" />
+            </div>
+            <div class="form-group">
+              <label>密码</label>
+              <input type="password" name="password" required placeholder="密码" />
+            </div>
+            <button type="submit" class="btn primary">登录</button>
+          </form>
+        </section>
+        
+        <section class="card">
+          <h2>操作日志</h2>
+          <pre class="log" id="log"></pre>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+    <script>
+      // 页面特定逻辑
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("formLogin");
+        if (form) {
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            await handleLogin(data);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

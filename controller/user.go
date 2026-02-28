@@ -14,6 +14,7 @@ type RegisterRequest struct {
 	Username string `json:"username" binding:"required"` // 用户名必填
 	Password string `json:"password" binding:"required"` // 密码必填
 	Email    string `json:"email"`                       // 邮箱选填
+	Role     string `json:"role"`                        // 角色 (user/admin)
 }
 
 // LoginRequest 登录接口需要的入参结构体
@@ -36,10 +37,15 @@ func Register(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "密码加密失败"})
 		return
 	}
+	role := req.Role
+	if role != "admin" {
+		role = "user"
+	}
 	user := model.User{
 		Username: req.Username,           // 用户名
 		Password: string(hashedPassword), // 加密后的密码
 		Email:    req.Email,              // 邮箱
+		Role:     role,
 	}
 	// 写入数据库
 	if err := common.DB.Create(&user).Error; err != nil {
@@ -72,7 +78,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	// 生成 JWT Token，后续请求要带在请求头中
-	token, err := utils.GenerateToken(user.ID, user.Username)
+	token, err := utils.GenerateToken(user.ID, user.Username, user.Role)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "生成令牌失败"})
 		return
@@ -82,5 +88,6 @@ func Login(c *gin.Context) {
 		"token":    token,
 		"user_id":  user.ID,
 		"username": user.Username,
+		"role":     user.Role,
 	})
 }

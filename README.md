@@ -28,7 +28,6 @@
   - `models.go`：User / Product / Order 等数据模型定义；
 - `utils/`：
   - `jwt.go`：JWT 生成与解析工具；
-- `cmd/stress_test/main.go`：压测程序入口，用于并发注册用户、登录、发起下单请求；
 - `distributed-lock-renewal.md`：分布式锁续期机制的说明文档。
 
 ---
@@ -68,18 +67,6 @@
   - 使用 Redis 分布式锁限制“同一用户对同一商品的频繁下单”；
   - 使用 MySQL 事务 + 行级锁防止库存超卖；
   - 针对 user_id + product_id 建立唯一索引，用于防止重复购买。
-
-### 4. 压测程序
-
-- 入口：`cmd/stress_test/main.go`
-- 功能：
-  - 并发创建大量用户；
-  - 并行调用登录接口，获取一批 JWT Tokens；
-  - 使用这些 Token 并发发起下单请求，模拟秒杀压力；
-  - 汇总成功 / 失败次数，用于验证：
-    - 是否存在超卖；
-    - Redis 分布式锁是否有效防止重复下单；
-    - SQL 事务是否保证最终一致性。
 
 ---
 

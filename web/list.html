@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>商品列表 - 秒杀系统</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1>秒杀商品列表</h1>
+          <div class="muted">当前用户: <span id="currentUsername">-</span></div>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" class="btn secondary">返回首页</a>
+          <button id="btnLogout" class="btn danger">退出登录</button>
+        </div>
+      </header>
+
+      <main class="grid-3">
+        <section class="card grid-span-3">
+          <div class="toolbar">
+            <h2>商品列表</h2>
+            <button id="btnLoadProducts" class="btn primary">刷新列表</button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>商品名称</th>
+                <th>库存</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="productTbody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--muted)">点击刷新加载数据...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card grid-span-3">
+          <h2>操作日志</h2>
+          <pre class="log" id="log"></pre>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+    <script>
+      // 页面特定逻辑
+      document.addEventListener("DOMContentLoaded", () => {
+        requireAuth(); // 必须登录
+        
+        document.getElementById("btnLoadProducts").addEventListener("click", handleLoadProducts);
+        document.getElementById("btnLogout").addEventListener("click", () => {
+          logout();
+          window.location.href = "./index.html";
+        });
+
+        document.getElementById("productTbody").addEventListener("click", (e) => {
+          const btn = e.target.closest("button[data-action]");
+          if (!btn) return;
+          if (btn.dataset.action === "order") {
+            handleOrder(btn.dataset.id);
+          }
+        });
+        
+        // 自动加载一次
+        handleLoadProducts();
+      });
+    </script>
+  </body>
+</html>

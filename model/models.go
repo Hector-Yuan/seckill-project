@@ -8,6 +8,7 @@ type User struct {
 	Username string `gorm:"type:varchar(50);unique;not null" json:"username"`
 	Password string `gorm:"type:varchar(100);not null" json:"-"`
 	Email    string `gorm:"type:varchar(100)" json:"email"`
+	Role     string `gorm:"type:varchar(20);default:'user'" json:"role"` // user 或 admin
 }
 
 // Product 商品表

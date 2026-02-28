@@ -15,16 +15,18 @@ var jwtSecret = []byte("seckill-secret")
 type Claims struct {
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
+	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 // GenerateToken 根据用户信息生成 JWT 字符串
-func GenerateToken(userID uint, username string) (string, error) {
+func GenerateToken(userID uint, username string, role string) (string, error) {
 	now := time.Now()
 	// 构造负载（Payload）
 	claims := Claims{
 		UserID:   userID,
 		Username: username,
+		Role:     role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(24 * time.Hour)), // 过期时间：24 小时
 			IssuedAt:  jwt.NewNumericDate(now),                     // 签发时间
